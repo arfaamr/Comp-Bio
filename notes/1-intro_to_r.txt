@@ -1,0 +1,51 @@
+
+Arfaa Rashid
+November 21, 2022
+Intro to R
+https://hbctraining.github.io/Intro-to-R/
+
+
+-------------------------------------
+
+SYNTAX
+
+R - programming language/environment for statistical computing & graphics
+RStudio - IDE for R
+
+should organize working directory depending on type of analysis -
+    ex: data (raw), results, figures (plots)
+
+code editor -
+    not quite like usual?
+    code editor essentially console but saved?
+    3+5 in console outputs 8 as expected
+    3+5 in editor also produces 8 when run
+    no need for print(), etc?
+
+    can highlight only selected code to run
+
+console - 
+    > enter command (esc to exit command)
+    + enter more data
+
+-------------------------------------
+
+DATA
+
+evalutate expression diff b-w brain samples from mice
+
+counts.rpkm.txt 
+    normalized counts file
+    contains whole brain samples of RNA seq from 12 mice
+    stored in CSV (comma separated values) file
+    2D matrix - gene x sample
+
+mouse_exp_design.txt
+    metadata file - info about data
+    CSV
+    sample x info about sample
+
+R is good with categorical data
+stored in specific data structure is easier to work with than just a txt
+
+
