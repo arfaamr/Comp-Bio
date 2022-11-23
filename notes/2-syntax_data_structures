@@ -1,0 +1,115 @@
+
+Arfaa Rashid
+November 21, 2022
+Intro to R
+https://hbctraining.github.io/Intro-to-R/
+
+
+-------------------------------------
+
+SYNTAX
+
+<- Assignment operator
+variable <- value
+x <- 3 equivalent to x = 3
+
+print variable value by typing variable name or using parentheses
+    x
+    (x <- 5)
+    ^ both output 5
+
+run button in RStudio runs one line at a time
+use ctrl+shft+enter to run all
+how to stop it from echoing every line? **
+
+
+-------------------------------------
+
+
+DATA TYPES
+
+numeric     - like floats. can be +-
+character   - like strings. use ""
+integer     - like ints. ex: 2L where L indicates that it's an integer
+logical     - like bools
+complex     - like complex numbers in math (?)
+raw         - (?)
+
+
+-------------------------------------
+
+
+DATA STRUCTURES
+
+variables can hold different data structures, not just values. for ex:
+
+c           - vectors
+factor      - factors
+matrix      - matrices
+data.frame  - data frames
+list        - lists
+etc..
+
+
+-------------------------------------
+
+
+VECTORS
+
+    use combine function c() to create
+    nums <- c(3,4,5)
+
+like a list
+must contain same type. if not, won't necessarily throw error, but will try to convert 
+
+
+-------------------------------------
+
+
+FACTORS
+
+    use factor() on a vector to convert it to a factor
+
+special vector for categorical data
+each category is a factor level
+each factor label is assigned an integer value, creating value-label pairs (like a dict?)
+
+EX: 
+        expression <- c("low", "high", "medium", "high", "low", "medium", "high")
+    low, medium, high are categories, and are assigned integer values alphabetically
+    so high=1, low=2, medium=3
+
+
+-------------------------------------
+
+
+MATRICES
+
+collection of vectors of same size and data type
+like a 2d list?
+
+
+-------------------------------------
+
+
+DATA FRAMES
+
+    dataframe(vector1, vector2)
+
+similar to matrix
+collection of vectors of same size, but can have diff data types
+each vector is a column
+most common way of storing data
+
+*turns character vectors into factors
+
+
+-------------------------------------
+
+
+LISTS
+
+    list(vector, df, number)
+
+can hold any other data structures
+[[n]] indicates nth component when displayed
