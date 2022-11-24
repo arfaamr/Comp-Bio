@@ -1,6 +1,5 @@
-
 Arfaa Rashid
-November 21, 2022
+November 22, 2022
 Intro to R
 https://hbctraining.github.io/Intro-to-R/
 
@@ -61,6 +60,10 @@ VECTORS
 
 like a list
 must contain same type. if not, won't necessarily throw error, but will try to convert 
+
+can add to a vector:
+    nums <- c(nums,6)
+    nums <- c(2,nums)
 
 
 -------------------------------------

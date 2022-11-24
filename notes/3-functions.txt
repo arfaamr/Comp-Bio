@@ -1,0 +1,85 @@
+
+Arfaa Rashid
+November 23, 2022
+Intro to R
+https://hbctraining.github.io/Intro-to-R/
+
+
+-------------------------------------
+
+
+FUNCTIONS
+
+In general, behave as expected
+
+    functions perform a process - used to modularize and organize project
+    function is called by:
+        functionName(arguments)
+    arguments can contain "objects" to act on and "options" for additional specifications
+    when named, dont need to be in correct order
+
+?round              - opens help manual for round()
+args(round)         - gives args..
+example("round")    - gives ex..
+
+    sqrt(vector) performs function on each element of vector  
+    holds for all functions? **
+
+
+-------------------------------------
+
+
+MISSING VALUES
+
+NA is returned when function operates on vector with missing data
+    na.rm=TRUE          ignores all missing data
+    na.omit             generates a function with missing data removed
+    complete.cases()    returns logical vector indicating which rows have no missing values 
+
+what does it mean by "missing values"? **
+
+
+-------------------------------------
+
+
+USER DEFINED FUNCTIONS
+
+    functionName <- function(arg1, arg2){
+        ..function definition..
+        return(stuff)
+    }
+
+do not need to define type of arg
+like local vbs, objects created within function are local to it
+
+
+-------------------------------------
+
+
+PACKAGES & LIBRARIES
+
+package - collection of functions, data, etc
+library - directory where package is stored
+    ^somewhat synonymous
+
+CRAN, Bioconductor repos have useful packages
+(must install BiocManager using install.packages first [once]
+then, BiocManager::install("packageName") works)
+
+Must install package only once, but load library in each session
+Once library is loaded, functions in it can be used like normal?
+
+--
+    sessionInfo()                       - version info about R, OS, attached/loaded packages
+    search()                            - list of attached packages
+
+    install.packages("packageName")                         - install package (from CRAN specifically?)
+    install.packages("path", type="source", repos=NULL)     - install package from local source files
+    package::function_name()                                - execute a function from particular package
+
+    library(packageName)            - load library
+--
+
+
+
+
