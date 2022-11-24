@@ -1,0 +1,53 @@
+
+Arfaa Rashid
+November 23, 2022
+Intro to R
+https://hbctraining.github.io/Intro-to-R/
+
+
+-------------------------------------
+
+
+READING DATA 
+
+usually need to read in data to analyze
+how depends on type of file and format of data
+see table: https://hbctraining.github.io/Intro-to-R/lessons/04_introR-data-wrangling.html
+
+functions exist to get sense of structure of data, like str(), class(), summary()
+
+
+-------------------------------------
+
+
+SELECTING DATA/DATA STRUCTURES+
+
+may want to partition data to focus on certain rows/cols
+
+vectors:
+
+    age <- c(3,5,6)
+
+    indices begin at 1 (ew)
+        age[2] gives 2nd element
+        age[-2] gives all but 2nd element
+    can also index using a vector
+        idx <- c(2,3)
+        age[idx] gives 5 6
+    can index a continuous sequence
+        age[1:3] gives indices 1 to 3 inclusive
+
+    can compare vectors with logical operators
+    this returns a logical vector
+        age > 4 gives vector FALSE TRUE TRUE
+    can be used to "filter" original vector
+        age[age>4] gives 5 6
+
+factors:
+
+    factors are special vectors, so above methods apply
+
+    can also filter by factor level
+        expression[expression == "high"]
+
+

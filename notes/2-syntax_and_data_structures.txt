@@ -83,6 +83,17 @@ EX:
     so high=1, low=2, medium=3
 
 
+RELEVELING FACTORS
+
+    recall expression <- factor(c("low", "high", "medium", "high", "low", "medium", "high"))
+categories "low", "medium", "high" were assigned numbers alphabetically
+high=1, low=2, medium=3
+
+This doesnt really make sense: would want low=1, medium=2, high=3
+to relevel: add argument to factor with vector with categories in correct order
+    expression <- factor(expression, levels=c("low", "medium", "high"))
+
+
 -------------------------------------
 
 
