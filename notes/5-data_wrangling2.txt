@@ -1,0 +1,55 @@
+
+Arfaa Rashid
+November 24, 2022
+Intro to R
+https://hbctraining.github.io/Intro-to-R/
+
+
+-------------------------------------
+
+
+SELECTING DATA - CONT
+
+dataframes: 
+
+    dataframes/matrices are 2D
+    use coordinates to index
+        dataframe[r,c]
+
+    specifying just a row or just a column returns a vector of that row/col
+        dataframe[r,] OR dataframe[,c]
+    
+    specify a continuous seq with :
+    specify multiple rows/cols with a vector
+    
+    can also use row/col name to index 
+        dataframe[,"celltype"] or metadata$genotype [$ for cols only]
+
+    select using logical operators
+        metadata[metadata$celltype == "typeA",] OR
+        idx <- metadata$celltype == "typeA"
+        metadata[idx,]  (idx is a logical vector)
+
+lists:
+
+    though technically a vector in a way, index differently
+    list[[i]], this preserves original data structure
+    list[[i]][j] indexes data structure at j
+
+    cant index multiple elements
+    using list[i], can index multiple elements with vectors but original data structure is not retained
+
+    can name list components with a vector
+    names(list) <- c("name1", "name2", "name3")
+    then, can access with listName$compName OR listName[["compName"]]
+
+
+-------------------------------------
+
+
+WRITING DATA
+
+write.csv(matrixName, file="path/filename") writes comma separated matrix
+write(vectorName, file="path/filename", ncolumns=1) writes vector
+
+note that tidyverse contains methods to make data wrangling easier..
