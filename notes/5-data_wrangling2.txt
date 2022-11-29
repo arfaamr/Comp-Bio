@@ -10,6 +10,7 @@ https://hbctraining.github.io/Intro-to-R/
 
 SELECTING DATA - CONT
 
+
 dataframes: 
 
     dataframes/matrices are 2D

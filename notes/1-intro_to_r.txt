@@ -28,6 +28,8 @@ console -
     > enter command (esc to exit command)
     + enter more data
 
+cmd+shift+c to comment out section
+
 -------------------------------------
 
 DATA

@@ -1,6 +1,7 @@
 
 #Arfaa Rashid
 #Intro to R
+#individual scripts for each lesson have been compiled into one
 
 #2 - Syntax and Data Structures
 #Nov 22, 2022
@@ -94,3 +95,77 @@ metadata
 
 metadata$genotype
 
+
+#Nov 27, 2022
+#match_reorder.r
+
+
+rpkm_data <- read.csv("./data/counts.rpkm.csv", stringsAsFactors = TRUE)
+head(rpkm_data) #shows first few lines, to see what data looks like
+
+#note that colnames in data match rownames in metadata. However, they are out of order
+
+ncol(rpkm_data) == nrow(metadata) #is there corresponding data for each piece of metadata? TRUE -> yes
+
+A = c(1,2,3,4)
+B = c(4,3,2,1)
+
+A == B
+all(A == B)
+
+x <- rownames(metadata)
+y <- colnames(rpkm_data)
+
+all(x %in% y) #TRUE
+all(x == y) #FALSE
+#all present, but in the wrong order. Must use a reordering method
+
+#reordering---
+
+important_genes <- c("ENSMUSG00000083700", "ENSMUSG00000080990", "ENSMUSG00000065619", "ENSMUSG00000047945", "ENSMUSG00000081010", "ENSMUSG00000030970")
+
+#? wants to extract rows corresponding to above genes with %in%, but how? 
+indices <- important_genes %in% rpkm_data
+indices
+head(rpkm_data)
+x
+head(rpkm_data[indices])
+#rpkm_data[indices] 
+typeof(rpkm_data)
+rpkm_data[1,] #row1
+rpkm_data[,]
+
+#confusion ** RETURN
+
+vect <- c('A','B','C','D')
+vect[c(1,2)] #vector containing index 1, 2
+vect
+vect[c(2,1)] #returns element at 2, element at 1. essentially reversed
+vect
+
+#reorder vector
+
+orig <- c("A", "B", "C", "D")
+want <- c("D", "B", "A", "C")
+
+reord_idx <- match(want,orig)
+orig_reord <- orig[reord_idx]
+orig_reord # orig vector (A B C D) has been ordered to wanted vector (D B A C)
+
+#get a subset
+
+first <- c('A', 'B', 'C', 'D')
+second <- c('B', 'A', 'D')
+idx <- match(first, second)
+
+second[idx] #gives A B NA D, so reorders rest with placeholder for C
+
+#reorder given dataset and metadata so they match
+
+rownames(metadata)    #in order
+colnames(rpkm_data)   #not in order
+
+genomic_idx <- match(rownames(metadata), colnames(rpkm_data))
+rpkm_ordered <- rpkm_data[,genomic_idx]
+head(rpkm_data)
+head(rpkm_ordered)

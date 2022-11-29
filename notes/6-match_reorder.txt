@@ -1,0 +1,60 @@
+
+Arfaa Rashid
+November 27-29, 2022
+Intro to R
+https://hbctraining.github.io/Intro-to-R/
+
+
+-------------------------------------
+
+
+MATCHING DATA
+
+Recall that there are 2 files: data and metadata.
+Data is biological measurements for each sample and metadata contains info about each sample to categorize them
+In this case, data is gene expression generated with RNA-Seq, and metadata holds info about genotypes and cell types
+-> So, can compare gene expression with respect to different genotypes and cell types and look for discrepancies -> makes sense
+
+Want data and metadata to directly correspond (may initially be out of order) so the matching info can be found -> like related lists
+
+
+-------------------------------------
+
+
+COMPARISON OPERATORS
+
+vector1 %in% vector2
+    returns logical vector for each element in vector1, indicating whether it exists in vector2
+    This means vector1[vector1 %in% vector2] returns the elements in vector1 that exist in vector2 -> intersection
+    any(vector1 %in% vector2), all(vector1 %in% vector2) work as imagined
+
+vector1 == vector2
+    returns logical vector comparing 1st elements, 2nd elements, etc. Thus, |vector1| = |vector2|
+    all(vector1 == vector2) indicates whether perfect match
+
+rownames(), colnames() gets vector of just respective names
+
+
+
+**what type of data structure are the read datafiles? dataframes?
+
+
+-------------------------------------
+
+
+REORDERING
+
+Create vector of rownames of data (gene names) --? struggling
+
+match(vector of values in desired order, vector to be reordered) -> returns first position of desired in actual, used to reorder
+    match(c('A', 'B', 'C'), c('B', 'C', 'A)) gives 3 1 2
+        index in 2nd vector of each value in first vector
+        c('B','C','A')[c(3,1,2)] gives ordered vector
+
+can use match() to get a subset of original, if lengths of vector parameters are different
+    match(c('A', 'B', 'C', 'D'), c('B', 'A', 'D')) returns 2 1 NA 3
+        NA returned for C because C does not exist in the vector we want to reorder
+
+recall that rownames of metadata match colnames of expression data. Want to match these so the data corresponds(, like a related list)
+can use match to reorder expression data to match metadata.
+
