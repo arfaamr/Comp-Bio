@@ -1,0 +1,62 @@
+
+Arfaa Rashid
+November 27-29, 2022
+Intro to R
+https://hbctraining.github.io/Intro-to-R/
+
+
+-------------------------------------
+
+
+SETUP
+
+goal: plot average expression / age of mouse
+
+need additional cols in metadata
+want to add col of mean expression for each sample.
+Could use a for() loop, but there are easier ways
+
+map() family of functions live in purrr package which exists in tidyverse
+
+map()       creates list
+map_dbl()   creats numeric vector
+map_chr()   creates character vector
+etc..
+
+usage: map(object, function to apply)
+
+
+-------------------------------------
+
+
+PLOTTING [world domination >:)]
+
+use ggplot() to visualize data
+function initializes graph structure to be added to
+add to graph using "layers"
+
+geom object specifies type of plot
+must set aes() function 
+    ggplot(new_metadata) +
+     geom_point(aes(x = age_in_days, y= samplemeans))
+    
+aes() can also specify color based on another column, etc
+
+to keep consistent theme, can put some layers in a function and add that function like any other layer
+
+
+-------------------------------------
+
+
+EXPORTING
+
+
+1) click export on plots page in RStudio
+
+2) use R functions to have it hard coded into script
+
+
+-------------------------------------
+
+
+..Lesson 8 - Tidyverse page does not exist :| ah well it probably wasn't important

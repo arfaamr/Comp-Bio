@@ -30,8 +30,9 @@ df <- data.frame(species, glengths)
 df
 
 
-#2 - Syntax and Data Structures
-#Nov 22, 2022
+#---------------------------------------------------
+#2 - Libraries, Packages, Functions
+#Nov 23, 2022
 
 #install.packages("ggplot2") #run once
 library(ggplot2)
@@ -96,8 +97,9 @@ metadata
 metadata$genotype
 
 
+#---------------------------------------------------
 #Nov 27, 2022
-#match_reorder.r
+#6: match_reorder.r
 
 
 rpkm_data <- read.csv("./data/counts.rpkm.csv", stringsAsFactors = TRUE)
@@ -169,3 +171,38 @@ genomic_idx <- match(rownames(metadata), colnames(rpkm_data))
 rpkm_ordered <- rpkm_data[,genomic_idx]
 head(rpkm_data)
 head(rpkm_ordered)
+
+
+#---------------------------------------------------
+#Nov 29, 2022
+#7: data_visualization.r
+
+
+head(rpkm_ordered$sample1)
+mean(rpkm_ordered$sample1)
+#we want a vector of size 12 containing means of all 12 samples, so it can be added as a col in the metadata
+#use map()
+
+library(purrr)
+
+sample_means <- map_dbl(rpkm_ordered, mean)   #new vector for means (named index sample_means.)
+#length(sample_means)
+
+
+age_in_days <- c(40, 32, 38, 35, 41, 32, 34, 26, 28, 28, 30, 32) #new vector for age of mice
+
+new_metadata <- data.frame(metadata, sample_means, age_in_days) #data.frame() adds cols
+view(new_metadata)
+
+## Open device for exporting plot to pdf
+pdf("./figures/scatterplot.pdf")
+
+ggplot(new_metadata) + geom_point(aes(x=age_in_days, y=sample_means,color=genotype, shape=celltype),size=2.25) + theme(axis.title = element_text(size=rel(1.5)),plot.title=element_text(hjust=0.5)) + xlab("Age (days)") + ylab("Mean expression") + ggtitle("Mice Gene Expression WRT Age")
+
+ggplot(new_metadata) + geom_boxplot(aes(x=genotype, y=sample_means, shape=celltype, color=genotype)) + theme(axis.title = element_text(size=rel(1.5)),plot.title=element_text(hjust=0.5)) + xlab("Genotype") + ylab("Mean expression") + ggtitle("Mice Gene Expression WRT Genotype")
+
+dev.off() #must close file to finish exporting
+
+#? my scatterplot doesnt look exactly like theirs :( 
+#Some y-values are off on the graph, but the metadata dataframe matches theirs
+
