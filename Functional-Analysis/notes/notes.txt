@@ -1,0 +1,106 @@
+
+Arfaa Rashid
+Nov 30, 2022
+Functional analysis workshop
+https://hbctraining.github.io/Training-modules/DGE-functional-analysis/
+
+
+-------------------------------
+DATASET
+
+Dataset is output of differential expression analysis of RNA-Seq dataset
+Study was performed to investigate genes involved in Fragile X syndrome
+
+FMRP is a protein whose mutation can cause FX syndrome
+MOV10 is RNA helicase associated with FMRP
+    Both regulate RNA translation
+        We expect enrichment of processes/pathways related to mRNA translation/splicing/regulation
+
+goal:  identify differentially expressed genes between control and cells overexpressing Mov10 *?
+
+
+-------------------------------
+GENE ANNOTATIONS
+
+    "Gene annotation involves the process of taking the raw DNA sequence produced by the 
+    genome-sequencing projects and adding layers of analysis and interpretation necessary to 
+    extracting biologically significant information and placing such derived details into context." 
+
+general databases:              compehensive info on features [Ensemble, NCBI, etc]
+annotation-specific databases:  annotations about specific topic [Gene Ontology, KEGG, etc]
+
+* genome buid - must use same genome build for analysis that was used to develop gene list
+    genomic builds may have different names/locations for its features (gene, transcript, exon, etc)
+
+can access databases with different R packages: (they all have super weird names)
+org.Xx.eg.db
+EnsDb.Xx.vxx
+TxDb.Xx.UCSC.hgxx.knownGene
+etc.. see link above for full table
+
+Interface tools:    AnnotationHub provides interface for accessing gene databases
+                    AnnotationDbi provides interface for accessing annotation databases
+
+
+-------------------------------
+FUNCTIONAL ANALYSIS
+
+functional analysis gives more insight on results of differential analysis
+    diff analysis returned list of differentially expressed genes
+        differential expression: significant change in expression levels between 2 conditions
+
+we can: determine if there is enrichment of biological processes
+        group genes based on trends and draw conclusions
+        identify global changes
+
+3 main tools for functional analysis:   over-representation analysis, functional class scoring, and pathway topology
+
+
+Over-Representation Analysis:
+    categorize genes into sets by function/location/etc, and determine if a set is overrepresented wrt a reference
+
+    Hypergeometric test:    determines if set is over-represented
+                                -determines probability of having same proportion of each set WRT "background sets (?)" of same categories
+
+                            formula:    P(X=k) = ((K ch k)((N-K) ch (n-k)))/(N ch n)
+                                        where   k = number of genes in category
+                                                n = total genes in list
+                                                N = total genes in entire genome
+                                                K = number of genes in category from N
+
+    Gene ontology project:  have consistent names/descriptions to easily categorize
+        terms are organized into 3 main ontologies:
+            1) Biological process: generally involves chemical/physical change. [transcription, apoptosis]
+            2) Molecular function: biochemical activity of the gene product. [ligand, transporter]
+            3) Cellular component: location in the cell of the gene product. [nucleus, lysosome]
+
+        each term has a name and an accessation number
+        a gene product can be associated with multiple terms
+        how many depends on its functions and how deeply it has been researched
+
+    --In this specific example:
+        background set is all genes that were tested for diff expression, so all genes in results table
+        sig gene list is all genes from results with padj < 0.05    [? *i dont know how diff analysis works so I dont really know what this means]
+
+        "Over-representation (or enrichment) analysis is a statistical method that determines whether 
+        genes from pre-defined sets (ex: those beloging to a specific GO term or KEGG pathway) are
+        present more than would be expected (over-represented) in a subset of your data. 
+        In this case, the subset is your set of under or over expressed genes."
+
+        So take set of under/over expressed genes and compare proportions of categories to see if a category is over represented, indicating an anomaly 
+
+    use enrichGO() function
+
+
+
+Functional Class Scoring:
+    looks for large fold changes to determine if certain processes are enriched
+    hypothesis:     large changes in individual genes can have significant effects on pathways,
+                    but weaker and coordinated changes in functionally related genes can also have significant effects
+                    Thus, all genes are considered rather than setting an arbitrary threshold to identify ‘significant genes’, like in ORA
+
+                    The gene-level stats are aggregated to generate a single pathway-level statistic
+                    Statistical significance of each pathway is reported
+
+    Gene set enrichment analysis is a type of FCS
+        *Ensembl ID vs Entrez ID?
