@@ -17,7 +17,7 @@ library(ggrepel)
 library(tidyverse)
 library(clusterProfiler)        #performs OR analysis w/ hypergeometric testing
 library(DOSE)
-library(pathview)
+library(pathview)  #used for visualization
 library(AnnotationDbi)
 library(org.Hs.eg.db)           #package links to the relevant dbs for human organisms
 library(EnsDb.Hsapiens.v75)     #package with dbs for correct build - must install correct release of Ensembl to query?
@@ -26,8 +26,10 @@ library(EnsDb.Hsapiens.v75)     #package with dbs for correct build - must insta
 #---------------------------
 #Read in data - Bulk RNA-seq data
 #https://hbctraining.github.io/Training-modules/DGE-functional-analysis/lessons/01_setting_up.html - link to data
-res_tableOE <- read.csv("data/Mov10oe_DE_results.csv", row.names = 1)   #differential expression results
-                                                                        #w/out row.names=1, first col is row names instead. parameter sets which col to take row names from
+res_tableOE <- read.csv("data/Mov10oe_DE_results.csv", row.names = 1)   
+#differential expression results
+                                                                        
+#w/out row.names=1, first col is row names instead. parameter sets which col to take row names from
 annotations_ahb <- read.csv("data/annotations_ahb.csv")
 
 #Creates tibble (modified data frame)
