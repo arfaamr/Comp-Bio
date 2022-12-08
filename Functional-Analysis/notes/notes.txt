@@ -4,42 +4,63 @@ Nov 30, 2022
 Functional analysis workshop
 https://hbctraining.github.io/Training-modules/DGE-functional-analysis/
 
+Mostly general conceptual notes relating to the biological concepts in the workshop, and methods of statistical analysis
+
 
 -------------------------------
 DATASET
 
 Dataset is output of differential expression analysis of RNA-Seq dataset
-Study was performed to investigate genes involved in Fragile X syndrome
+Differential analysis: comparing individual gene expression between 2 conditions
 
-FMRP is a protein whose mutation can cause FX syndrome
-MOV10 is RNA helicase associated with FMRP
-    Both regulate RNA translation
-        We expect enrichment of processes/pathways related to mRNA translation/splicing/regulation
+Context:    Study was performed to investigate genes involved in Fragile X syndrome
+            FMRP is a protein whose mutation can cause FX syndrome
+            MOV10 is RNA helicase associated with FMRP
+                Both regulate RNA translation
+                    We expect enrichment of processes/pathways related to mRNA translation/splicing/regulation
 
-goal:  identify differentially expressed genes between control and cells overexpressing Mov10 *?
+goal:  identify differentially expressed genes between control [normal(?)] and cells overexpressing Mov10 *?
 
 
 -------------------------------
 GENE ANNOTATIONS
 
-    "Gene annotation involves the process of taking the raw DNA sequence produced by the 
-    genome-sequencing projects and adding layers of analysis and interpretation necessary to 
-    extracting biologically significant information and placing such derived details into context." 
+Gene annotation -   "-given raw DNA sequence produced by genome-sequencing projects,
+                    add layers of analysis/interpretation to extract biologically 
+                    significant info to give context to such derived details-"
+                    
+                -   essentially, a DNA seq is useless-- no intrinsic info. need to 
+                    annotate--so associate more info with the seq: gene, 
+                    its products, purpose, etc--to actually learn anything
 
-general databases:              compehensive info on features [Ensemble, NCBI, etc]
-annotation-specific databases:  annotations about specific topic [Gene Ontology, KEGG, etc]
+    *in this workshop we were given genes, not raw DNA seq? So we are further annotating the genes by ascribing 
+        purpose, location, categorizing function, etc ?
 
-* genome buid - must use same genome build for analysis that was used to develop gene list
-    genomic builds may have different names/locations for its features (gene, transcript, exon, etc)
+How to annotate? 
+    Access corresponding info in databases -
+        general databases:              compehensive info on features [Ensemble, NCBI, etc]
+        annotation-specific databases:  annotations about specific topic [Gene Ontology, KEGG, etc]
+        etc.
 
-can access databases with different R packages: (they all have super weird names)
-org.Xx.eg.db
-EnsDb.Xx.vxx
-TxDb.Xx.UCSC.hgxx.knownGene
-etc.. see link above for full table
+Genomic Build:
+    - "version" of the human(or any?) genome reference
+    - Recall: Human Genome Project from lesson
+        sequencing the human genome - find seq of bases for all dna in human
+        99.9% the same per person, 0.01% codes for unique genes
+        recall: order of bases is important - mutations result in different order results in diseases etc, which can now be tested for genetically
+        https://www.youtube.com/watch?v=-hryHoTIHak
+    - this reference genome has been continually improved [https://gatk.broadinstitute.org/hc/en-us/articles/360035890951-Human-genome-reference-builds-GRCh38-or-hg38-b37-hg19#:~:text=Successive%20%22versions%22%20of%20the%20human,the%20representativeness%20of%20the%20reference]
+    
+    - KEYPOINT: must use same genome build that was used to develop gene list for analysis, since they may have different names/locations for its features,etc
 
-Interface tools:    AnnotationHub provides interface for accessing gene databases
-                    AnnotationDbi provides interface for accessing annotation databases
+Accessing databases:
+    many R packages exist to query databases:
+        org.Xx.eg.db    - gene feature info for particular organism; only latest genomic build available 
+        EnsDb.Xx.vxx    - get transcript/gene info using gene ID; can specify version for correct genomic build
+        ...these 2 are used in this workshop but there are many more; see link above for full table
+
+Interface tools:    AnnotationHub provides interface for accessing gene databases   [ensembl]
+                    AnnotationDbi provides interface for accessing annotation databases     [orgDb, EnsDb]
 
 
 -------------------------------
@@ -91,6 +112,13 @@ Over-Representation Analysis:
 
     use enrichGO() function
 
+    results: table with 
+                - each term from the gene ontology category [in this case, every biological process that was represented]
+                - gene ratio: percentage of significant genes that were identified for this biological process
+                - bg ratio: percentage of background genes identified for process
+                - p-adj/p-val/1-val: other statistical measurements
+                - geneID: lists gene IDs of all significant genes that are represented by that term 
+
 
 
 Functional Class Scoring:
@@ -104,3 +132,50 @@ Functional Class Scoring:
 
     Gene set enrichment analysis is a type of FCS
         *Ensembl ID vs Entrez ID?
+
+
+
+
+
+
+
+
+-------------------------------
+..ERROR
+
+Error in completeSubclasses(classDef2, class1, obj, where) : 
+  trying to get slot "subclasses" from an object of a basic class ("NULL") with no slots
+Error: package or namespace load failed for ‘tidyverse’:
+ .onLoad failed in loadNamespace() for 'dbplyr', details:
+  call: setClass(cl, contains = c(prevClass, "VIRTUAL"), where = where)
+  error: error in contained classes ("character") for class “ident”; class definition removed from ‘dbplyr’
+
+Triggered by:
+    literally nothing?
+
+Tried:
+    devtools::install_github("RobinHankin/Brobdingnag")
+
+    update.packages("dbplyr")
+
+    update.packages()   (all the ones without this option: Do you want to install from sources the packages which need compilation?)
+                        including matrix [supposedly manually updating matrix is supposed to help]
+
+    devtools::install_github("tidyverse/tidyverse")     [uninstalled tidyverse and installed its development version using this command rather than install.package()]
+        worked 
+
+
+-------------------------------
+GEN NOTES/ QNS
+
+arg %>% function is fancy syntax for function(arg)
+fold change: measurement for change b/w A, B. fold change of B WRT A = B/A
+
+
+
+*** visualization ->    for some reason, looks diff
+                        hard to manipulate without knowing args, poor doc
+    
+    why did it query the databases to annotate, only to not use the results? 
+        Just to show how you would find annotation data on your own, if not given?
+
