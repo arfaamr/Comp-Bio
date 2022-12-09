@@ -102,7 +102,7 @@ ego <- enrichGO(gene = sigOE_genes,
                 OrgDb = org.Hs.eg.db, 
                 ont = "BP",                    #specifies GO subcategory to compare by. BP - biological processes
                 pAdjustMethod = "BH", 
-                qvalueCutoff = 0.05, 
+                qvalueCutoff = 0.02, 
                 readable = TRUE)
 
 cluster_summary <- data.frame(ego) 
@@ -116,7 +116,7 @@ write.csv(cluster_summary,"results/clusterProfiler_Mov10oe.csv")
 pdf("results/plots.pdf")    #open pdf file to write to 
 
 # Creating Dotplot
-dotplot(ego, showCategory=50, title = "OR Analysis")      #*** how can i find parameter names to manipulate graph..? args() returning ...
+dotplot(ego, showCategory=10, title = "OR Analysis")      #*** how can i find parameter names to manipulate graph..? args() returning ...
 
 
 # Creating Netplot
@@ -154,4 +154,28 @@ foldchanges <- res_entrez$log2FoldChange
 names(foldchanges) <- res_entrez$entrezid
 ## Sort fold changes in decreasing order
 foldchanges <- sort(foldchanges, decreasing = TRUE)
+
+## GSEA using gene sets from KEGG pathways
+gseaKEGG <- gseKEGG(geneList = foldchanges,     # ordered vector of fold changes named by entrez ID
+                    organism = "hsa",           # supported organisms listed below [?] - search for homosapiens data in KEGG database?
+                    nPerm = 1000,               # default number permutations [??]
+                    minGSSize = 20,             # minimum gene set size - only look at categories with 20+ genes in them
+                    pvalueCutoff = 0.05,        # padj cutoff value - only look at significantly differentially expressed genes
+                    verbose = FALSE)
+
+## Extract and write GSEA results
+gseaKEGG_results <- gseaKEGG@result
+write.csv(gseaKEGG_results, "results/gseaOE_kegg.csv", quote=F)
+
+
+#---------------------------
+#Visualizing GSEA
+
+
+#pdf("results_GSEA/plots.pdf")    #open pdf file to write to 
+
+#gseaplot(gseaKEGG, geneSetID = 'hsa03040')
+
+#dev.off()
+
 

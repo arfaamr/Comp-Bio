@@ -173,9 +173,18 @@ fold change: measurement for change b/w A, B. fold change of B WRT A = B/A
 
 
 
-*** visualization ->    for some reason, looks diff
-                        hard to manipulate without knowing args, poor doc
+*** visualization ->    for some reason, looks diff -- possibly due to age of workshop? updates made etc
+                        hard to manipulate without knowing params, poor documentation
     
     why did it query the databases to annotate, only to not use the results? 
         Just to show how you would find annotation data on your own, if not given?
+
+    what is number of permutations in GSEA?
+    due to perms, results will be slightly diff each time..?
+    recommended in current version not to have?
+
+    what does warning 4 even refer to?
+
+    how does GSEA really differ from ORA? hypothesis makes it sound relatively similar: testing overall change in category
+        apparently, they are relatively similar.?
 
