@@ -171,11 +171,9 @@ write.csv(gseaKEGG_results, "results/gseaOE_kegg.csv", quote=F)
 #---------------------------
 #Visualizing GSEA
 
+pdf("results/plots_GSEA.pdf")    #open pdf file to write to 
+gseaplot(gseaKEGG, geneSetID = 'hsa03040')     # results look straight up wrong? compared to workshop
 
-#pdf("results_GSEA/plots.pdf")    #open pdf file to write to 
-
-#gseaplot(gseaKEGG, geneSetID = 'hsa03040')
-
-#dev.off()
+dev.off()
 
 
