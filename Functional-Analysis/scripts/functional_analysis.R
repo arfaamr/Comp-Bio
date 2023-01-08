@@ -25,7 +25,7 @@ library(ggrepel)                #for visualisation - text label geom for ggplot 
 library(DOSE)
 library(pathview)               #used for visualisation
 library(AnnotationDbi)
-
+library(dplyr)                  #"inner_join() not found" error was thrown until this was loaded, but it didnt have an error a couple weeks ago>?
 
 #---------------------------
 #Read in given datafiles -> data is a list of genes - link to data: https://hbctraining.github.io/Training-modules/DGE-functional-analysis/lessons/01_setting_up.html
@@ -172,8 +172,21 @@ write.csv(gseaKEGG_results, "results/gseaOE_kegg.csv", quote=F)
 #Visualizing GSEA
 
 pdf("results/plots_GSEA.pdf")    #open pdf file to write to 
-gseaplot(gseaKEGG, geneSetID = 'hsa03040')     # results look straight up wrong? compared to workshop
+gseaplot(gseaKEGG, geneSetID = 'hsa03040')     # arbitrary ID; just looking at GSEA of any pathway
 
 dev.off()
 
 
+
+
+#--???
+
+
+#detach("package:dplyr", unload=TRUE) # first unload dplyr to avoid conflicts # err so skip...
+
+## Output images for a single significant KEGG pathway
+pathview(gene.data = foldchanges,
+         pathway.id = "hsa03040",
+         species = "hsa",
+         limit = list(gene = 2, # value gives the max/min limit for foldchanges
+                      cpd = 1))
