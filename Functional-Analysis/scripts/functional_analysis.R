@@ -17,6 +17,8 @@
 #---------------------------
 #Load libraries
 
+library(dplyr)                  #"inner_join() not found" error was thrown until this was loaded, but it didnt have an error a couple weeks ago>?
+
 library(tidyverse)              #collection of integrated packages for common data science functionalities, eg tibble
 library(org.Hs.eg.db)           #package to query annotation db - gene feature info for particular organism, but only latest genomic build available 
 library(EnsDb.Hsapiens.v75)     #package to query annotation db - get transcript/gene info using gene ID; can specify version for correct genomic build
@@ -25,7 +27,7 @@ library(ggrepel)                #for visualisation - text label geom for ggplot 
 library(DOSE)
 library(pathview)               #used for visualisation
 library(AnnotationDbi)
-library(dplyr)                  #"inner_join() not found" error was thrown until this was loaded, but it didnt have an error a couple weeks ago>?
+
 
 #---------------------------
 #Read in given datafiles -> data is a list of genes - link to data: https://hbctraining.github.io/Training-modules/DGE-functional-analysis/lessons/01_setting_up.html
@@ -174,7 +176,6 @@ write.csv(gseaKEGG_results, "results/gseaOE_kegg.csv", quote=F)
 pdf("results/plots_GSEA.pdf")    #open pdf file to write to 
 gseaplot(gseaKEGG, geneSetID = 'hsa03040')     # arbitrary ID; just looking at GSEA of any pathway
 
-dev.off()
 
 
 
@@ -190,3 +191,38 @@ pathview(gene.data = foldchanges,
          species = "hsa",
          limit = list(gene = 2, # value gives the max/min limit for foldchanges
                       cpd = 1))
+
+
+
+
+# GSEA using gene sets associated with BP Gene Ontology terms
+gseaGO <- gseGO(geneList = foldchanges, 
+                OrgDb = org.Hs.eg.db, 
+                ont = 'BP', 
+                nPerm = 1000, 
+                minGSSize = 20, 
+                pvalueCutoff = 0.05,
+                verbose = FALSE) 
+
+gseaGO_results <- gseaGO@result
+
+gseaplot(gseaGO, geneSetID = 'GO:0007423')
+
+
+dev.off()
+
+
+
+
+#BiocManager::install("GSEABase")
+#library(GSEABase)
+
+# Load in GMT file of gene sets (we downloaded from the Broad Institute for MSigDB)
+
+#c2 <- read.gmt("/data/c2.cp.v6.0.entrez.gmt.txt")  #dont have file
+
+#msig <- GSEA(foldchanges, TERM2GENE=c2, verbose=FALSE)
+
+#msig_df <- data.frame(msig)
+
+
