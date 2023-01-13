@@ -4,7 +4,8 @@
 #functional_analysis.r
 #https://hbctraining.github.io/Training-modules/DGE-functional-analysis/
   
-#Program takes results of differential analysis on a gene set and performs functional analysis on it using over-representation analysis and functional class scoring methods. Visualizes results of FA using various graphs
+# Program takes results of differential analysis on a gene set and performs functional analysis on them
+# Uses over-representation analysis and functional class scoring methods. Visualizes results using various graphs
 
 #---------------------------
 #Install packages
@@ -17,39 +18,45 @@
 #---------------------------
 #Load libraries
 
-library(dplyr)                  #"inner_join() not found" error was thrown until this was loaded, but it didnt have an error a couple weeks ago>?
-
+library(dplyr)                  #tools for manipulating dataframes          [--not in workshop, but dplyr functions not found until this was loaded, prob due to some update]
 library(tidyverse)              #collection of integrated packages for common data science functionalities, eg tibble
-library(org.Hs.eg.db)           #package to query annotation db - gene feature info for particular organism, but only latest genomic build available 
-library(EnsDb.Hsapiens.v75)     #package to query annotation db - get transcript/gene info using gene ID; can specify version for correct genomic build
-library(clusterProfiler)        #performs OR analysis w/ hypergeometric testing
-library(ggrepel)                #for visualisation - text label geom for ggplot to repel labels & prevent overlaps
-library(DOSE)
-library(pathview)               #used for visualisation
-library(AnnotationDbi)
+
+library(org.Hs.eg.db)           #tools to query orgDb -   gene feature info for particular organism, but only latest genomic build available 
+library(EnsDb.Hsapiens.v75)     #tools to query EnsDb -   get transcript/gene info using gene ID; can specify version for correct genomic build
+library(AnnotationDbi)          #annotation interface to connect various databases(?**)
+
+library(clusterProfiler)        #tools for analysing/visualising data -   performs OR analysis w/ hypergeometric testing, performs GSEA
+library(DOSE)                   #used with clusterProfiler to perform ORA(?**)
+library(pathview)               #for visualisation -  integrate GSEA data into pathway images
+library(ggrepel)                #for visualisation -  use text label geom in ggplot to repel labels & prevent overlaps
 
 
 #---------------------------
-#Read in given datafiles -> data is a list of genes - link to data: https://hbctraining.github.io/Training-modules/DGE-functional-analysis/lessons/01_setting_up.html
+#Read in given datafiles
+#     - data is a list of genes
+#     - link to data: https://hbctraining.github.io/Training-modules/DGE-functional-analysis/lessons/01_setting_up.html
 
+# differential expression results
 res_tableOE <- read.csv("data/Mov10oe_DE_results.csv", row.names = 1)   
-#differential expression results
-                                                        
+
+# given annotation file [as opposed to annotations we queried ourselves later]
 annotations_ahb <- read.csv("data/annotations_ahb.csv")
 
-#Creates tibble (modified data frame)
+#Creates tibble (modified data frame) of DE results
 res_tableOE_tb <- res_tableOE %>%
  rownames_to_column(var="gene") %>% 
  as_tibble()
 
 
 #---------------------------
-#Extract annotations from db -> get info about each gene in res_tableOE_tb
+#Extract annotations from db
+#   -> get info about each gene in res_tableOE_tb
+#   - as opposed to using given annotation file -> to show we can query databases ourselves if annotations had not been given (?**)
 
 
 #using org.Hs.eg.db
 
-#Return the Ensembl IDs for a set of genes - get gene names from res_tableOE and query database for their associated ENSEMBL IDs, ENTREZ IDs
+#return Ensembl IDs for a set of genes by getting gene names from res_tableOE and querying database for associated ENSEMBL, ENTREZ IDs
 annotations_orgDb <- AnnotationDbi::select(org.Hs.eg.db,
                                            keys = res_tableOE_tb$gene,                      #data used to query                         
                                            columns = c("ENSEMBL", "ENTREZID","GENENAME"),   #what we are looking for
@@ -65,7 +72,6 @@ annotations_orgDb <- annotations_orgDb[non_duplicates_idx, ]
 
 #using EnsDb.Hsapiens.v75
 
-# Return the Ensembl IDs for a set of genes
 annotations_edb <- AnnotationDbi::select(EnsDb.Hsapiens.v75,
                                          keys = res_tableOE_tb$gene,
                                          columns = c("GENEID", "ENTREZID","GENEBIOTYPE"),   
@@ -78,19 +84,17 @@ annotations_edb <- annotations_edb[non_duplicates_idx, ]
 #no longer any NA entries, so it worked correctly
 length(which(is.na(annotations_edb$GENEID)))
 
-#***what is the point of all this ^ ? never used?
-#*annotations_edb contains mostly same info as annotations_ahb, which workshop says to read in and use instead
-#*seems to have more info
+
 #---------------------------
 #OR Analysis
 
-#goal: determine which categories are overRep'd in a subset of under/over expressed genes*
+#goal: determine which GO categories are overRep'd in a subset of under/over expressed genes (?**)
 
 ## Merge annotation df with initial results df
 res_ids <- inner_join(res_tableOE_tb, annotations_ahb, by=c("gene"="gene_name"))
 
-## background set: all genes tested for significance in results           
-allOE_genes <- as.character(res_ids$gene_id)    
+## background set: all genes tested for significance
+allOE_genes <- as.character(res_ids$gene_id)
 
 ## significant set: only genes with p-adjusted values<0.05 - ones with a significant difference [in ? geneexp?]
 sigOE <- dplyr::filter(res_ids, padj < 0.05)
@@ -107,6 +111,7 @@ ego <- enrichGO(gene = sigOE_genes,
                 qvalueCutoff = 0.02, 
                 readable = TRUE)
 
+# save results to rda and csv files
 cluster_summary <- data.frame(ego) 
 save(ego, file="results/ego.rda")
 write.csv(cluster_summary,"results/clusterProfiler_Mov10oe.csv")
@@ -115,28 +120,26 @@ write.csv(cluster_summary,"results/clusterProfiler_Mov10oe.csv")
 #---------------------------
 #Visualization of ORA
 
-pdf("results/plots.pdf")    #open pdf file to write to 
+pdf("results/plots.pdf")    #opens pdf file to write to 
 
 # Creating Dotplot
-dotplot(ego, showCategory=10, title = "OR Analysis")      #*** how can i find parameter names to manipulate graph..? args() returning ...
+dotplot(ego, showCategory=10, title = "OR Analysis")      #how can i find parameter names to manipulate graph..? args() returning ... no good documentation (?**)
 
-
-# Creating Netplot
+# Creating Netplot - details the genes associated with one or more terms (by default gives the top 5 significant terms (by padj))
 ## extracting the log2 fold changes from results table by creating named vector, in order to colour graph by log2fold change
 OE_foldchanges <- sigOE$log2FoldChange
 names(OE_foldchanges) <- sigOE$gene
 
-options(ggrepel.max.overlaps = Inf)     #***should prevent warning about too many unlabeled data points, but it's not working..
+options(ggrepel.max.overlaps = Inf)     #should prevent warning about too many unlabeled data points, but it's not working(?**). how to use ggrepel to repel them in the first place? 
+#only shows some labels. has to do with warning? tried increasing max.overlaps, changing label size..
 
-## cnetplot details the genes associated with one or more terms - by default gives the top 5 significant terms (by padj)
+# create plot
 cnetplot(ego, 
          categorySize="pvalue", 
          showCategory = 5, 
          color.params = list(foldChange=OE_foldchanges), 
          vertex.label.font=1,
          ggrepel.max.overlaps = Inf)
-
-#***only shows some labels. has to do with warning? tried increasing max.overlaps, changing label size..
 
 dev.off()                     #close pdf file
 
