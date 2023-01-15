@@ -150,6 +150,19 @@ Pathway Topology Analysis:
 
 
 -------------------------------
+--USING OWN ANNOTATIONS - functional_analysis_ANN.R
+
+annotations_ahb is provided by workshop
+    contains ~56000 genes with gene name, (ensembl) id, entrez id, biotype
+annotations_edb contains results from querying EnsDb.Hsapiens.v75
+    contains ~20000 genes with "symbol" (gene name?), (ensemble) id, entrez id, genebiotype
+annotations_orgDb contains results from querying org.Hs.eg.db, but was inaccurate due to genomic build
+
+replaced annotations_ahb with annotations_edb and replaced relevant column names with corresponding ones
+results are relatively similar - makes sense, and means the annotations we queried the dbs for ourselves were also correct
+
+
+-------------------------------
 GEN NOTES/QNS
 
 fold change: measurement for change b/w A, B. fold change of B WRT A = B/A
@@ -165,4 +178,8 @@ why did it query the databases to annotate, only to not use the results?
 
 difference between ORA and GSEA? 
     -- see FCS hyptohesis
+
+why do ORA and GSEA still use org.Hs.eg.db in enrichGO()/gseaGO() functions?
+    "#uses ensembl IDs to search the org.Hs.eg.db database, categorize by GO term, and perform over-rep analysis"
+    isnt org database genomic version different from dataset, so it shouldnt be used???
 
