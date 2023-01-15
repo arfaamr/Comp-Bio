@@ -88,7 +88,7 @@ length(which(is.na(annotations_edb$GENEID)))
 #---------------------------
 #OR Analysis
 
-#goal: determine which GO categories are overRep'd in a subset of under/over expressed genes (?**)
+#goal: determine which GO categories are overRep'd in a subset of under/over expressed genes
 
 ## Merge annotation df with initial results df
 res_ids <- inner_join(res_tableOE_tb, annotations_ahb, by=c("gene"="gene_name"))
@@ -126,14 +126,14 @@ pdf("results/plots.pdf")    #opens pdf file to write to
 dotplot(ego, showCategory=10, title = "OR Analysis")      #how can i find parameter names to manipulate graph..? args() returning ... no good documentation (?**)
 
 # Creating Netplot - details the genes associated with one or more terms (by default gives the top 5 significant terms (by padj))
-## extracting the log2 fold changes from results table by creating named vector, in order to colour graph by log2fold change
+#extracting the log2 fold changes from results table by creating named vector, in order to colour graph by log2fold change
 OE_foldchanges <- sigOE$log2FoldChange
 names(OE_foldchanges) <- sigOE$gene
 
 options(ggrepel.max.overlaps = Inf)     #should prevent warning about too many unlabeled data points, but it's not working(?**). how to use ggrepel to repel them in the first place? 
 #only shows some labels. has to do with warning? tried increasing max.overlaps, changing label size..
 
-# create plot
+#create plot
 cnetplot(ego, 
          categorySize="pvalue", 
          showCategory = 5, 
@@ -147,7 +147,7 @@ dev.off()                     #close pdf file
 #---------------------------
 #Gene Set Enrichment Analysis (FCS)
 
-#using log2fold vals to measure change
+#goal: using log2fold vals to measure change, test differential expression over entire gene sets
 
 ## Remove NA values 
 res_entrez <- dplyr::filter(res_ids, entrezid != "NA")
@@ -157,7 +157,7 @@ res_entrez <- res_entrez[which(duplicated(res_entrez$entrezid) == F), ]
 foldchanges <- res_entrez$log2FoldChange
 ## Name each fold change with the corresponding Entrez ID
 names(foldchanges) <- res_entrez$entrezid
-## Sort fold changes in decreasing order
+## Sort fold changes
 foldchanges <- sort(foldchanges, decreasing = TRUE)
 
 ## GSEA using gene sets from KEGG pathways
@@ -168,37 +168,13 @@ gseaKEGG <- gseKEGG(geneList = foldchanges,     # ordered vector of fold changes
                     pvalueCutoff = 0.05,        # padj cutoff value - only look at significantly differentially expressed genes
                     verbose = FALSE)
 
-## Extract and write GSEA results
+#extract and write GSEA results
 gseaKEGG_results <- gseaKEGG@result
 write.csv(gseaKEGG_results, "results/gseaOE_kegg.csv", quote=F)
 
 
-#---------------------------
-#Visualizing GSEA
-
-pdf("results/plots_GSEA.pdf")    #open pdf file to write to 
-gseaplot(gseaKEGG, geneSetID = 'hsa03040')     # arbitrary ID; just looking at GSEA of any pathway
-
-
-
-
-
-#--???
-
-
-#detach("package:dplyr", unload=TRUE) # first unload dplyr to avoid conflicts # err so skip...
-
-## Output images for a single significant KEGG pathway
-pathview(gene.data = foldchanges,
-         pathway.id = "hsa03040",
-         species = "hsa",
-         limit = list(gene = 2, # value gives the max/min limit for foldchanges
-                      cpd = 1))
-
-
-
-
-# GSEA using gene sets associated with BP Gene Ontology terms
+## GSEA doesnt necessarily need to use KEGG pathways. could group by GO, etc as well
+# - using gene sets associated with BP Gene Ontology terms
 gseaGO <- gseGO(geneList = foldchanges, 
                 OrgDb = org.Hs.eg.db, 
                 ont = 'BP', 
@@ -209,23 +185,30 @@ gseaGO <- gseGO(geneList = foldchanges,
 
 gseaGO_results <- gseaGO@result
 
-gseaplot(gseaGO, geneSetID = 'GO:0007423')
 
+#---------------------------
+#Visualizing GSEA
+
+pdf("results/plots_GSEA.pdf")    #open pdf file to write to 
+
+#kegg
+# visualizing one (arbitrary?) pathway as GSEA plot
+gseaplot(gseaKEGG, geneSetID = 'hsa03040')     #hsa03040 is id of a kegg pathway
+
+# visualizing one pathway as pathway images
+#detach("package:dplyr", unload=TRUE) # first unload dplyr to avoid conflicts # err so skip...
+
+pathview(gene.data = foldchanges,
+         pathway.id = "hsa03040",
+         species = "hsa",
+         limit = list(gene = 2, # value gives the max/min limit for foldchanges
+                      cpd = 1))
+#^ ?** how to save images to results folder rather than in same folder? 
+
+#go
+gseaplot(gseaGO, geneSetID = 'GO:0007423')
 
 dev.off()
 
-
-
-
-#BiocManager::install("GSEABase")
-#library(GSEABase)
-
-# Load in GMT file of gene sets (we downloaded from the Broad Institute for MSigDB)
-
-#c2 <- read.gmt("/data/c2.cp.v6.0.entrez.gmt.txt")  #dont have file
-
-#msig <- GSEA(foldchanges, TERM2GENE=c2, verbose=FALSE)
-
-#msig_df <- data.frame(msig)
 
 

@@ -4,13 +4,13 @@ Nov 30, 2022
 Functional analysis workshop
 https://hbctraining.github.io/Training-modules/DGE-functional-analysis/
 
-Mostly general conceptual notes relating to the biological concepts in the workshop, and methods of statistical analysis
+Mostly general conceptual notes relating to the biological concepts and methods of statistical analysis in the workshop
 
 
 -------------------------------
 DATASET
 
-Dataset is output of differential expression analysis of RNA-Seq dataset
+Dataset is output of differential expression analysis on RNA-Seq dataset, in the form of a list of genes
 Differential analysis: comparing individual gene expression between 2 conditions
 
 Context:    Study was performed to investigate genes involved in Fragile X syndrome
@@ -19,7 +19,8 @@ Context:    Study was performed to investigate genes involved in Fragile X syndr
                 Both regulate RNA translation
                     We expect enrichment of processes/pathways related to mRNA translation/splicing/regulation
 
-goal:  identify differentially expressed genes between control [normal(?)] and cells overexpressing Mov10 *?
+goal:  identify differentially expressed genes between control [normal(?)] and cells overexpressing Mov10 ?**
+            ***? what does this tell us? what's special about these genes wrt context? 
 
 
 -------------------------------
@@ -33,7 +34,7 @@ Gene annotation -   "-given raw DNA sequence produced by genome-sequencing proje
                     annotate--so associate more info with the seq: gene, 
                     its products, purpose, etc--to actually learn anything
 
-    *in this workshop we were given genes, not raw DNA seq? So we are further annotating the genes by ascribing 
+    *in this workshop we were already given genes, not raw DNA seq? So we are further annotating the genes by ascribing 
         purpose, location, categorizing function, etc ?
 
 How to annotate? 
@@ -43,13 +44,13 @@ How to annotate?
         etc.
 
 Genomic Build:
-    - "version" of the human(or any?) genome reference
+    - "version" of the genome reference
     - Recall: Human Genome Project from lesson
         sequencing the human genome - find seq of bases for all dna in human
         99.9% the same per person, 0.01% codes for unique genes
         recall: order of bases is important - mutations result in different order results in diseases etc, which can now be tested for genetically
         https://www.youtube.com/watch?v=-hryHoTIHak
-    - this reference genome has been continually improved [https://gatk.broadinstitute.org/hc/en-us/articles/360035890951-Human-genome-reference-builds-GRCh38-or-hg38-b37-hg19#:~:text=Successive%20%22versions%22%20of%20the%20human,the%20representativeness%20of%20the%20reference]
+    - this reference genome has been continually improved, resulting in different versions [https://gatk.broadinstitute.org/hc/en-us/articles/360035890951-Human-genome-reference-builds-GRCh38-or-hg38-b37-hg19#:~:text=Successive%20%22versions%22%20of%20the%20human,the%20representativeness%20of%20the%20reference]
     
     - KEYPOINT: must use same genome build that was used to develop gene list for analysis, since they may have different names/locations for its features,etc
 
@@ -59,7 +60,7 @@ Accessing databases:
         EnsDb.Xx.vxx    - get transcript/gene info using gene ID; can specify version for correct genomic build
         ...these 2 are used in this workshop but there are many more; see link above for full table
 
-Interface tools:    AnnotationHub provides interface for accessing gene databases   [ensembl]
+Interface tools:    AnnotationHub provides interface for accessing gene databases           [ensembl]
                     AnnotationDbi provides interface for accessing annotation databases     [orgDb, EnsDb]
 
 
@@ -67,8 +68,8 @@ Interface tools:    AnnotationHub provides interface for accessing gene database
 FUNCTIONAL ANALYSIS
 
 functional analysis gives more insight on results of differential analysis
-    diff analysis returned list of differentially expressed genes
-        differential expression: significant change in expression levels between 2 conditions
+    (diff analysis returned list of differentially expressed genes
+        differential expression: significant change in expression levels between 2 conditions)
 
 we can: determine if there is enrichment of biological processes
         group genes based on trends and draw conclusions
@@ -76,10 +77,13 @@ we can: determine if there is enrichment of biological processes
 
 3 main tools for functional analysis:   over-representation analysis, functional class scoring, and pathway topology
 
+    "Over-representation (or enrichment) analysis is a statistical method that determines whether 
+        genes from pre-defined sets (ex: those beloging to a specific GO term or KEGG pathway) are
+        present more than would be expected (over-represented) in a subset of your data. 
+        In this case, the subset is your set of under or over expressed genes."
 
 Over-Representation Analysis:
     categorize genes into sets by function/location/etc, and determine if a set is overrepresented wrt a reference
-
     Hypergeometric test:    determines if set is over-represented
                                 -determines probability of having same proportion of each set WRT "background sets (?)" of same categories
 
@@ -89,28 +93,17 @@ Over-Representation Analysis:
                                                 N = total genes in entire genome
                                                 K = number of genes in category from N
 
-    Gene ontology project:  have consistent names/descriptions to easily categorize
+    Gene Ontology - way to categorize genes
         terms are organized into 3 main ontologies:
             1) Biological process: generally involves chemical/physical change. [transcription, apoptosis]
             2) Molecular function: biochemical activity of the gene product. [ligand, transporter]
             3) Cellular component: location in the cell of the gene product. [nucleus, lysosome]
 
-        each term has a name and an accessation number
-        a gene product can be associated with multiple terms
-        how many depends on its functions and how deeply it has been researched
-
     --In this specific example:
         background set is all genes that were tested for diff expression, so all genes in results table
-        sig gene list is all genes from results with padj < 0.05    [? *i dont know how diff analysis works so I dont really know what this means]
-
-        "Over-representation (or enrichment) analysis is a statistical method that determines whether 
-        genes from pre-defined sets (ex: those beloging to a specific GO term or KEGG pathway) are
-        present more than would be expected (over-represented) in a subset of your data. 
-        In this case, the subset is your set of under or over expressed genes."
+        sig gene list is all genes from results with padj < 0.05
 
         So take set of under/over expressed genes and compare proportions of categories to see if a category is over represented, indicating an anomaly 
-
-    use enrichGO() function
 
     results: table with 
                 - each term from the gene ontology category [in this case, every biological process that was represented]
@@ -118,6 +111,10 @@ Over-Representation Analysis:
                 - bg ratio: percentage of background genes identified for process
                 - p-adj/p-val/1-val: other statistical measurements
                 - geneID: lists gene IDs of all significant genes that are represented by that term 
+    
+    - enrichGO() function
+    - ENSEMBL IDs
+    - categorizing using GO terms
 
 
 
@@ -131,60 +128,41 @@ Functional Class Scoring:
                     Statistical significance of each pathway is reported
 
     Gene set enrichment analysis is a type of FCS
-        *Ensembl ID vs Entrez ID?
+        
+    - gseaKEGG() function
+    - ENTREZ IDs
+    - group based on KEGG pathways      [doesnt necessarily need to use KEGG pathways. could group by GO or any other as well]
+    - ranked list sorted by fold changes
+
+    interpreting GSEA plot: 
+        green plot is ES (enrichment score) - how over/under expressed gene is wrt ranked list
+        black vertical bars along the x-axis are genes from your input list that feature in the gene-set -> position represents position in ranked list
+            ^ explain 2nd graph, but first? 
+    
+    how to interpret pathview images?
 
 
 
-
-
-
-
-
--------------------------------
-..ERROR
-
-Error in completeSubclasses(classDef2, class1, obj, where) : 
-  trying to get slot "subclasses" from an object of a basic class ("NULL") with no slots
-Error: package or namespace load failed for ‘tidyverse’:
- .onLoad failed in loadNamespace() for 'dbplyr', details:
-  call: setClass(cl, contains = c(prevClass, "VIRTUAL"), where = where)
-  error: error in contained classes ("character") for class “ident”; class definition removed from ‘dbplyr’
-
-Triggered by:
-    literally nothing?
-
-Tried:
-    devtools::install_github("RobinHankin/Brobdingnag")
-
-    update.packages("dbplyr")
-
-    update.packages()   (all the ones without this option: Do you want to install from sources the packages which need compilation?)
-                        including matrix [supposedly manually updating matrix is supposed to help]
-
-    devtools::install_github("tidyverse/tidyverse")     [uninstalled tidyverse and installed its development version using this command rather than install.package()]
-        worked 
+Pathway Topology Analysis:
+    Identifies dysregulated pathways by considering gene interaction as well as fold changes and adj p-values
+    Determines pathway association by examining number and type of interactions between gene products
+    Example not given in workshop
 
 
 -------------------------------
-GEN NOTES/ QNS
+GEN NOTES/QNS
 
-arg %>% function is fancy syntax for function(arg)
 fold change: measurement for change b/w A, B. fold change of B WRT A = B/A
 
 
-
-*** visualization ->    for some reason, looks diff -- possibly due to age of workshop? updates made etc
-                        hard to manipulate without knowing params, poor documentation
+visualization?
+    for some reason, looks diff -- possibly due to age of workshop? updates made etc
+    hard to manipulate without knowing params, poor documentation
+    -- alternatives?
     
-    why did it query the databases to annotate, only to not use the results? 
-        Just to show how you would find annotation data on your own, if not given?
+why did it query the databases to annotate, only to not use the results? 
+    -- Just to show how you would find annotation data on your own, if not given?
 
-    what is number of permutations in GSEA?
-    due to perms, results will be slightly diff each time..?
-    recommended in current version not to have?
-
-    what does warning 4 even refer to?
-
-    how does GSEA really differ from ORA? hypothesis makes it sound relatively similar: testing overall change in category
-        apparently, they are relatively similar.?
+difference between ORA and GSEA? 
+    -- see FCS hyptohesis
 
