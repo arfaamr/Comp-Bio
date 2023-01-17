@@ -163,6 +163,31 @@ results are relatively similar - makes sense, and means the annotations we queri
 
 
 -------------------------------
+--CHANGING SAMPLE SIZE - functional_analysis_SAMPLE.R
+
+use sample_n(df, size) to randomly sample rows from original df.
+
+err at dotplot())
+    Error in ans[ypos] <- rep(yes, length.out = len)[ypos] : 
+    replacement has length zero
+    In addition: Warning message:
+    In rep(yes, length.out = len) : 'x' is NULL so the result will be NULL
+
+google says "This error message occurs when you try to equate a numeric member of a data structure to “numeric(0)“."
+
+cluster_summary is now empty.
+cluster_summary is ego as dataframe.
+ego is fine though.
+
+ego is the one used in dotplot() so cluster_summary shouldnt affect it tho.
+
+
+err at cnetplot()
+    Error in graph.data.frame(x, directed = FALSE) : 
+    the data frame should contain at least two columns
+
+
+-------------------------------
 GEN NOTES/QNS
 
 fold change: measurement for change b/w A, B. fold change of B WRT A = B/A
