@@ -194,6 +194,14 @@ suggests dataset size should be 15-500?
 https://www.youtube.com/watch?v=egO7Lt92gDY
 suggests that the analysis is using ~6000 genes?
 
+According to paper: ..(see Resource-Notes/Pathway Enrichment Analysis paper)..
+    pathway enrichment analysis/gsea is generally performed on large scale data, so 20000 makes sense
+
+Also according to comments here:
+    https://www.youtube.com/watch?v=-hryHoTIHak
+    20000 is a normal size input for GSEA
+
+    
 -------------------------------
 GEN NOTES/QNS
 
