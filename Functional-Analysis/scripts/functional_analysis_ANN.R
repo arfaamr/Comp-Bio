@@ -7,6 +7,8 @@
 # Program takes results of differential analysis on a gene set and performs functional analysis on them
 # Uses over-representation analysis and functional class scoring methods. Visualizes results using various graphs
 
+#**this version uses own annotations queried from EnsDb.Hsapiens.v75 to perform analysis as opposed to using given annotation file
+
 #---------------------------
 #Install packages
 

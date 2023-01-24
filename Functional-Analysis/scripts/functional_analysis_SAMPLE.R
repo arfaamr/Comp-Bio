@@ -7,6 +7,8 @@
 # Program takes results of differential analysis on a gene set and performs functional analysis on them
 # Uses over-representation analysis and functional class scoring methods. Visualizes results using various graphs
 
+#**uses smaller sample size of 20 genes for input, rather than 23000...? 
+
 #---------------------------
 #Install packages
 

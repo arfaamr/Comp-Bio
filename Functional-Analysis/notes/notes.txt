@@ -6,7 +6,6 @@ https://hbctraining.github.io/Training-modules/DGE-functional-analysis/
 
 Mostly general conceptual notes relating to the biological concepts and methods of statistical analysis in the workshop
 
-
 -------------------------------
 DATASET
 
@@ -77,6 +76,8 @@ we can: determine if there is enrichment of biological processes
 
 3 main tools for functional analysis:   over-representation analysis, functional class scoring, and pathway topology
 
+    https://www.youtube.com/watch?v=egO7Lt92gDY describes and illustrates difference between methods
+
     "Over-representation (or enrichment) analysis is a statistical method that determines whether 
         genes from pre-defined sets (ex: those beloging to a specific GO term or KEGG pathway) are
         present more than would be expected (over-represented) in a subset of your data. 
@@ -134,10 +135,10 @@ Functional Class Scoring:
     - group based on KEGG pathways      [doesnt necessarily need to use KEGG pathways. could group by GO or any other as well]
     - ranked list sorted by fold changes
 
-    interpreting GSEA plot: 
+    interpreting GSEA plot:
         green plot is ES (enrichment score) - how over/under expressed gene is wrt ranked list
-        black vertical bars along the x-axis are genes from your input list that feature in the gene-set -> position represents position in ranked list
-            ^ explain 2nd graph, but first? 
+        black vertical bars along the x-axis are genes from input list that feature in the gene-set -> position represents position in ranked list
+            ^ explains 2nd graph, but first? 
     
     how to interpret pathview images?
 
@@ -181,11 +182,17 @@ ego is fine though.
 
 ego is the one used in dotplot() so cluster_summary shouldnt affect it tho.
 
-
 err at cnetplot()
     Error in graph.data.frame(x, directed = FALSE) : 
     the data frame should contain at least two columns
 
+--why does the workshop use such large datasets?
+
+https://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html
+suggests dataset size should be 15-500?
+
+https://www.youtube.com/watch?v=egO7Lt92gDY
+suggests that the analysis is using ~6000 genes?
 
 -------------------------------
 GEN NOTES/QNS
