@@ -180,7 +180,7 @@ cluster_summary is now empty.
 cluster_summary is ego as dataframe.
 ego is fine though.
 
-ego is the one used in dotplot() so cluster_summary shouldnt affect it tho.
+ego is the one used in dotplot() so cluster_summary shouldnt affect it ?.
 
 err at cnetplot()
     Error in graph.data.frame(x, directed = FALSE) : 
@@ -209,7 +209,7 @@ fold change: measurement for change b/w A, B. fold change of B WRT A = B/A
 
 
 visualization?
-    for some reason, looks diff -- possibly due to age of workshop? updates made etc
+    looks diff -- possibly due to age of workshop? updates made etc
     hard to manipulate without knowing params, poor documentation
     -- alternatives?
     
