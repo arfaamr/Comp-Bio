@@ -201,7 +201,7 @@ Also according to comments here:
     https://www.youtube.com/watch?v=-hryHoTIHak
     20000 is a normal size input for GSEA
 
-    
+--- so 20,0000 is a normal sample set size; 20/100 would be too small
 -------------------------------
 GEN NOTES/QNS
 
