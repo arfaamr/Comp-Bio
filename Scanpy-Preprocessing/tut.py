@@ -59,11 +59,11 @@ sc.pp.filter_genes(adata, min_cells=3)
 
 #Use biological understanding of statistics indicating poor quality cells to perform quality control (QC) 
 
-#Annotate mitochondrial cells as "mt" and calculate QC metrics avout those cells - inPlace, so adata itself is updated with the info the function returns
+#Annotate mitochondrial cells as "mt" and calculate QC metrics about those cells - inPlace, so adata itself is updated with the info the function returns
 adata.var['mt'] = adata.var_names.str.startswith('MT-')
 sc.pp.calculate_qc_metrics(adata, qc_vars=['mt'], percent_top=None, log1p=False, inplace=True)
 
-#Plot violinplot, scatterplots of the QC metrics
+#Plot violinplot/scatterplots of the QC metrics
 sc.pl.violin(adata, ['n_genes_by_counts', 'total_counts', 'pct_counts_mt'],
              jitter=0.4, multi_panel=True)
 sc.pl.scatter(adata, x='total_counts', y='pct_counts_mt')
@@ -87,7 +87,7 @@ sc.pl.highly_variable_genes(adata)
 
 
 
-#set the .raw to the normalized, logarithmized version of adata?
+#set the .raw to the normalized, logarithmized version of adata? to use later?
 adata.raw = adata
 
 
@@ -106,6 +106,7 @@ sc.pp.scale(adata, max_value=10)
 
 #Perform PCA
 sc.tl.pca(adata, svd_solver='arpack')
+#Plot scatterplot of PCA results.?
 sc.pl.pca(adata, color='CST3')
 
 #Inspect contribution of single PCs to variance to determine how many PCs to consider when computing neighborhood relations of cells ?
@@ -118,10 +119,112 @@ adata.write(results_file)
 #----------------------------------------
 #NEIGHBOURHOOD GRAPH
 
+#Compute neighbourhood
+sc.pp.neighbors(adata, n_neighbors=10, n_pcs=40)
+
+# use UMAP instead of tSNE. if there are still connectivity violoations, run following code
+#  sc.tl.paga(adata)
+#  sc.pl.paga(adata, plot=False)  # remove `plot=False` if you want to see the coarse-grained graph
+#  sc.tl.umap(adata, init_pos='paga')
+
+#Compute UMAP
+sc.tl.umap(adata)
+
+#Plot using raw [normalized & logmarithmized but not corrected] data and then with scaled & corrected data
+sc.pl.umap(adata, color=['CST3', 'NKG7', 'PPBP'])
+sc.pl.umap(adata, color=['CST3', 'NKG7', 'PPBP'], use_raw=False)
+
+
+#----------------------------------------
+#CLUSTERING NEIGHBOURHOOD
+# use Leiden graph clustering method - clusters neighbourhood graph which we just produced
+
+sc.tl.leiden(adata
+             )
+#Plot and write results
+sc.pl.umap(adata, color=['leiden', 'CST3', 'NKG7'])
+adata.write(results_file)
+
+
+#----------------------------------------
+#FIND MARKER GENES
+
+#Compute ranking for differential genes in each cluster using t-test
+sc.tl.rank_genes_groups(adata, 'leiden', method='t-test')
+sc.pl.rank_genes_groups(adata, n_genes=25, sharey=False)
+
+adata.write(results_file)
+
+#Alternatively, rank using multivariate logistic regression
+sc.tl.rank_genes_groups(adata, 'leiden', method='logreg')
+sc.pl.rank_genes_groups(adata, n_genes=25, sharey=False)
+
+#Define marker genes.? are these the ones we found?
+marker_genes = ['IL7R', 'CD79A', 'MS4A1', 'CD8A', 'CD8B', 'LYZ', 'CD14',
+                'LGALS3', 'S100A8', 'GNLY', 'NKG7', 'KLRB1',
+                'FCGR3A', 'MS4A7', 'FCER1A', 'CST3', 'PPBP']
+
+
+adata = sc.read(results_file)
+#Show top 10 ranked genes per cluster 0, 1, …, 7 in dataframe
+pd.DataFrame(adata.uns['rank_genes_groups']['names']).head(5)
+#Get table with scores and groups
+result = adata.uns['rank_genes_groups']
+groups = result['names'].dtype.names
+pd.DataFrame(
+    {group + '_' + key[:1]: result[key][group]
+    for group in groups for key in ['names', 'pvals']}).head(5)
+
+#Compare to a single cluster
+sc.tl.rank_genes_groups(adata, 'leiden', groups=['0'], reference='1', method='wilcoxon')
+sc.pl.rank_genes_groups(adata, groups=['0'], n_genes=20)
+sc.pl.rank_genes_groups_violin(adata, groups='0', n_genes=8)
+
+
+#Reload with computed differential expression
+adata = sc.read(results_file)
+sc.pl.rank_genes_groups_violin(adata, groups='0', n_genes=8)
+
+#To compare certain gene across groups:
+sc.pl.violin(adata, ['CST3', 'NKG7', 'PPBP'], groupby='leiden')
+
+#Mark cell types
+new_cluster_names = [
+    'CD4 T', 'CD14 Monocytes',
+    'B', 'CD8 T',
+    'NK', 'FCGR3A Monocytes',
+    'Dendritic', 'Megakaryocytes']
+adata.rename_categories('leiden', new_cluster_names)
+sc.pl.umap(adata, color='leiden', legend_loc='on data', title='', frameon=False, save='.pdf')
 
 
 
+#Visualise marker genes
+#??? Semicolons? **
+sc.pl.dotplot(adata, marker_genes, groupby='leiden');
+sc.pl.stacked_violin(adata, marker_genes, groupby='leiden', rotation=90);
 
+
+
+#----------------------------------------
+#EXPORTING
+
+adata.write(results_file, compression='gzip')  
+
+adata.raw.to_adata().write('./write/pbmc3k_withoutX.h5ad')
+
+#To export to csv
+# Export single fields of the annotation of observations
+# adata.obs[['n_counts', 'louvain_groups']].to_csv(
+#     './write/pbmc3k_corrected_louvain_groups.csv')
+
+# Export single columns of the multidimensional annotation
+# adata.obsm.to_df()[['X_pca1', 'X_pca2']].to_csv(
+#     './write/pbmc3k_corrected_X_pca.csv')
+
+# Or export everything except the data using `.write_csvs`.
+# Set `skip_data=False` if you also want to export the data.
+# adata.write_csvs(results_file[:-5], )
 
 
 #----------------------------------------
@@ -134,6 +237,8 @@ what does .raw do?  "freezes the state of the AnnData object." ? may not be nece
 regress out? unit variance?
 
 what is "neighbourhood"? - review how PCA actually works 
+
+are plots actually being exported anywhere locally?
 
 """
 
