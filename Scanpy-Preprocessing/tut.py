@@ -44,6 +44,41 @@ results_file = 'write/pbmc3k.h5ad'  # file that will store analysis results
 
 
 #----------------------------------------
+#DATASET ANALYSIS
+# from Akram's script - view starting values, features of set
+
+def dataSetAnalysis(df):
+    #view starting values of data set
+    print("Dataset Head")
+    print(df.head(3))
+    print("=" * 30)
+    
+    # View features in data set
+    print("Dataset Features")
+    print(df.columns.values)
+    print("=" * 30)
+    
+    # View How many samples and how many missing values for each feature
+    print("Dataset Features Details")
+    print(df.info())
+    print("=" * 30)
+    
+    # view distribution of numerical features across the data set
+    print("Dataset Numerical Features")
+    print(df.describe())
+    print("=" * 30)
+    
+    # view distribution of categorical features across the data set
+    # print("Dataset Categorical Features")
+    # print(df.describe(include=['O']))
+    # print("=" * 30)
+
+
+df = adata.to_df()
+dataSetAnalysis(df)
+
+
+#----------------------------------------
 #PREPROCESSING
 
 #Plots boxplot showing the 20 genes with highest fraction of counts in each single cell across all cells
@@ -176,6 +211,7 @@ pd.DataFrame(
     for group in groups for key in ['names', 'pvals']}).head(5)
 
 #Compare to a single cluster
+adata.uns['log1p']["base"] = None       #***following line was giving keyerror: base, before this was added
 sc.tl.rank_genes_groups(adata, 'leiden', groups=['0'], reference='1', method='wilcoxon')
 sc.pl.rank_genes_groups(adata, groups=['0'], n_genes=20)
 sc.pl.rank_genes_groups_violin(adata, groups='0', n_genes=8)
@@ -194,7 +230,7 @@ new_cluster_names = [
     'B', 'CD8 T',
     'NK', 'FCGR3A Monocytes',
     'Dendritic', 'Megakaryocytes']
-adata.rename_categories('leiden', new_cluster_names)
+#adata.rename_categories('leiden', new_cluster_names)        #*** gives valueErr -> "leiden" and new_cluster_names are diff lengths? -> but looking at exported image, it has 8 categories, same as this?
 sc.pl.umap(adata, color='leiden', legend_loc='on data', title='', frameon=False, save='.pdf')
 
 
@@ -229,16 +265,21 @@ adata.raw.to_adata().write('./write/pbmc3k_withoutX.h5ad')
 
 #----------------------------------------
 """
-how to "look at" a variable, like in RStudio? like actually whats in the dataframe, etc
-
-what does it mean by "counts"? 
+what does it mean by "counts"? ln 72
 
 what does .raw do?  "freezes the state of the AnnData object." ? may not be necessary?
+
 regress out? unit variance?
 
 what is "neighbourhood"? - review how PCA actually works 
 
-are plots actually being exported anywhere locally?
+numpy not used. why did we import it?
+
+ERRs: ctrF ***
+=========================
+
+earlier part of Akram's looks diff, middle looks similar to tut i followed. mine has neighborhood graph/clustering
+
 
 """
 
