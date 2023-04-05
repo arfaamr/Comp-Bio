@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 
-#Setup scanpy
+#Setup scanpy plots
 sc.settings.verbosity = 3             # verbosity: errors (0), warnings (1), info (2), hints (3)
 sc.logging.print_header()
 sc.settings.set_figure_params(dpi=80, facecolor='white')
@@ -105,6 +105,7 @@ sc.pl.scatter(adata, x='total_counts', y='pct_counts_mt')
 sc.pl.scatter(adata, x='total_counts', y='n_genes_by_counts')
 
 #Remove cells with too many mt genes expressed or too many total counts
+#2500 and 5 decided from violin plots and keep range of most distribution
 adata = adata[adata.obs.n_genes_by_counts < 2500, :]
 adata = adata[adata.obs.pct_counts_mt < 5, :]
 
@@ -265,9 +266,6 @@ adata.raw.to_adata().write('./write/pbmc3k_withoutX.h5ad')
 
 #----------------------------------------
 """
-what does it mean by "counts"? ln 72
-
-what does .raw do?  "freezes the state of the AnnData object." ? may not be necessary?
 
 regress out? unit variance?
 
@@ -279,7 +277,7 @@ ERRs: ctrF ***
 =========================
 
 earlier part of Akram's looks diff, middle looks similar to tut i followed. mine has neighborhood graph/clustering
-
+    - she simplified the tut: used csv file because it's easier to work with
 
 """
 

@@ -57,7 +57,7 @@ sc.logging.print_versions()
 
 results_file = './results/10Xv2_pbmc1.h5ad'# the file that will store the analysis results
 
-cols = data1.columns
+cols = data1.columns    #//just to see what it looks like
 genelist = cols
 
 numberOfGenes = len(genelist)
@@ -66,11 +66,12 @@ dataSetAnalysis(labels)
 
 # Join col(gene) names to X values
 # rowNames = adata.obs_names
-cellsIndex  = pd.DataFrame(data1.index)
+cellsIndex  = pd.DataFrame(data1.index)     #//convert to df to use pd
 cells = data1.iloc[:,0]
-cells.shape
+cells.shape     #//R x C
 #type(cellsIndex)
 
+#//joining samples and labels using index(in both)
 labelWithIndex = pd.concat([cellsIndex,labels], axis=1)
 labelWithIndex.to_csv("./results/labelWithIndex.csv", index = False)
 labelWithCells = pd.read_csv("./results/labelWithIndex.csv",index_col=0)
@@ -79,6 +80,7 @@ dataSetAnalysis(concatenatedData)
 df = concatenatedData
 dfNotencode = df
 # Notice that 'assigned_cluster' contains string names to represent cell types. Let's encode them to integer
+#//^col in data
 print("Before encoding: ")
 len(np.unique(dfNotencode.iloc[:,-1]))
 cellTypes = dfNotencode.iloc[:,-1]
@@ -94,6 +96,7 @@ print(df.iloc[0:2000,-1])#example number of rows
 df.to_csv("./results/dataPBMC10Xv2Factorized.csv")
 
 # Scanpy ********************************************************************
+#//same as tut
 adata = sc.read_csv("./results/dataPBMC10Xv2Factorized.csv", first_column_names=True)
 data =adata
 type(data)
@@ -133,7 +136,7 @@ adata = adata[adata.obs.n_genes_by_counts < 4000, :]
 adata.var_names
 adata = adata[adata.obs.pct_counts_mt < 10, :]
 
-
+#//dont wanna norm labels 1,2,3..
 labelsBeforeNorm = adata.X[:,-1]
 max(labelsBeforeNorm)
 min(labelsBeforeNorm)
@@ -190,6 +193,8 @@ adata.var_names
 # Join col(gene) names to X values
 rowNames = adata.obs_names
 
+#//rejoin labels
+#//take row and col labels, conv to df and csv join
 type(rowNames)
 rows = pd.DataFrame(index=adata.obs_names)
 type(rows)
